@@ -1,37 +1,44 @@
 'use client'
 
 import React from "react"
-
 import { useState } from 'react'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { createClient } from '@/lib/supabase/client'
 import { 
   CheckCircle2, 
   Clock, 
   Shield, 
   Award, 
-  Home,
-  Building2,
-  Hammer,
-  Lightbulb,
-  Volume2,
-  DoorOpen,
-  Wrench,
-  Sparkles,
   Phone,
   Mail,
   MapPin,
-  MessageCircle
+  MessageCircle,
+  ArrowRight,
+  Star,
+  Zap,
+  Target,
+  Home,
+  Hammer,
+  DoorOpen,
+  Sparkles,
+  Volume2,
+  Building2,
+  Lightbulb,
+  Wrench
 } from 'lucide-react'
 
 export default function Page() {
   const [customerType, setCustomerType] = useState<'b2c' | 'b2b' | ''>('')
   const [selectedProject, setSelectedProject] = useState('')
   const [showCustomDescription, setShowCustomDescription] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
 
   const b2cProjects = [
     'Forro de PVC para Sala',
@@ -58,56 +65,136 @@ export default function Page() {
     setShowCustomDescription(value === 'Outro (descrever)')
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsSubmitting(true)
+    
     const formData = new FormData(e.target as HTMLFormElement)
-    console.log('[v0] Form submitted:', Object.fromEntries(formData))
+    const supabase = createClient()
+    
+    const { error } = await supabase.from('leads').insert({
+      name: formData.get('name') as string,
+      email: formData.get('email') as string,
+      phone: formData.get('phone') as string,
+      customer_type: formData.get('customerType') as string,
+      project: formData.get('project') as string,
+      custom_description: formData.get('customDescription') as string || null,
+      city: formData.get('city') as string,
+      message: formData.get('message') as string || null,
+    })
+    
+    setIsSubmitting(false)
+    
+    if (error) {
+      console.log('[v0] Error submitting lead:', error)
+      alert('Erro ao enviar formulário. Tente novamente.')
+    } else {
+      setSubmitSuccess(true)
+      ;(e.target as HTMLFormElement).reset()
+      setCustomerType('')
+      setSelectedProject('')
+      setShowCustomDescription(false)
+      setTimeout(() => setSubmitSuccess(false), 5000)
+    }
   }
 
   return (
     <div className="min-h-screen">
       {/* Fixed Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center">
-              <span className="text-xl font-bold text-primary-foreground">RT</span>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/98 backdrop-blur-md border-b border-border/40">
+        <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg">
+              <span className="text-2xl font-bold text-foreground">RT</span>
             </div>
-            <span className="font-heading font-bold text-xl">Rei do Teto</span>
+            <div>
+              <span className="font-heading font-bold text-xl block">Rei do Teto</span>
+              <span className="text-xs text-muted-foreground">Forros e Divisórias</span>
+            </div>
           </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <a href="#sobre" className="text-sm hover:text-primary transition-colors">Sobre</a>
-            <a href="#servicos" className="text-sm hover:text-primary transition-colors">Serviços</a>
-            <a href="#tendencias" className="text-sm hover:text-primary transition-colors">Tendências</a>
-            <a href="#orcamento" className="text-sm hover:text-primary transition-colors">Orçamento</a>
-          </nav>
-          <Button asChild className="bg-secondary hover:bg-secondary/90">
-            <a href="https://wa.me/5527996369622" target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="mr-2 h-4 w-4" />
-              WhatsApp
+          <nav className="hidden md:flex items-center gap-8">
+            <a href="#sobre" className="text-sm font-medium hover:text-primary transition-colors relative group">
+              Sobre
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
             </a>
-          </Button>
+            <a href="#servicos" className="text-sm font-medium hover:text-primary transition-colors relative group">
+              Serviços
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+            </a>
+            <a href="#tendencias" className="text-sm font-medium hover:text-primary transition-colors relative group">
+              Tendências
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+            </a>
+          </nav>
+          <div className="flex items-center gap-3">
+            <Button asChild variant="outline" className="hidden sm:flex bg-transparent">
+              <a href="tel:+5527996369622">
+                <Phone className="mr-2 h-4 w-4" />
+                Ligar
+              </a>
+            </Button>
+            <Button asChild className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg">
+              <a href="#orcamento">
+                Orçamento Grátis
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+          </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="pt-24 pb-16 md:pt-32 md:pb-24 bg-gradient-to-br from-secondary via-secondary/90 to-secondary/80 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjA1IiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+      <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden bg-gradient-to-br from-foreground via-foreground/95 to-foreground/90">
+        {/* Geometric Background */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-primary rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary rounded-full blur-3xl" />
+        </div>
+        
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+        
         <div className="container mx-auto px-4 relative">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl mb-6 text-balance">
-              Transforme Seu Espaço com Forros e Divisórias de Qualidade
-            </h1>
-            <p className="text-lg md:text-xl mb-8 text-white/90 leading-relaxed">
-              Especialistas em PVC, Drywall e Acabamentos no Espírito Santo. Qualidade garantida, entrega rápida e os melhores preços da região.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                <a href="#orcamento">Solicitar Orçamento Grátis</a>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="bg-white/10 border-white/20 text-white hover:bg-white/20">
-                <a href="#servicos">Ver Nossos Serviços</a>
-              </Button>
+          <div className="max-w-4xl mx-auto">
+            {/* Stats Bar */}
+            <div className="flex flex-wrap justify-center gap-8 mb-12">
+              <div className="flex items-center gap-2 text-background">
+                <Star className="h-5 w-5 text-primary fill-primary" />
+                <span className="text-sm font-medium">+10 anos de experiência</span>
+              </div>
+              <div className="flex items-center gap-2 text-background">
+                <Zap className="h-5 w-5 text-primary" />
+                <span className="text-sm font-medium">Entrega em até 7 dias</span>
+              </div>
+              <div className="flex items-center gap-2 text-background">
+                <Target className="h-5 w-5 text-primary" />
+                <span className="text-sm font-medium">+500 projetos realizados</span>
+              </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="text-center mb-12">
+              <h1 className="font-heading font-bold text-5xl md:text-6xl lg:text-7xl mb-6 text-balance text-background leading-tight">
+                Forros e Divisórias que{' '}
+                <span className="text-primary">Transformam</span> Ambientes
+              </h1>
+              <p className="text-lg md:text-xl text-background/80 max-w-2xl mx-auto mb-10 leading-relaxed">
+                Especialistas em PVC, Drywall e Acabamentos no Espírito Santo. Qualidade premium, prazos cumpridos e preços que cabem no seu bolso.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button size="lg" asChild className="bg-primary hover:bg-primary/90 text-foreground shadow-xl text-base">
+                  <a href="#orcamento">
+                    Solicitar Orçamento Grátis
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </a>
+                </Button>
+                <Button size="lg" variant="outline" asChild className="bg-transparent border-2 border-background/20 text-background hover:bg-background/10 text-base">
+                  <a href="https://wa.me/5527996369622" target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="mr-2 h-5 w-5" />
+                    Falar no WhatsApp
+                  </a>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -174,31 +261,44 @@ export default function Page() {
       </section>
 
       {/* Services Section */}
-      <section id="servicos" className="py-16 md:py-24 bg-muted/30">
+      <section id="servicos" className="py-24 md:py-32 bg-gradient-to-b from-muted/50 to-background">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-heading font-bold text-3xl md:text-4xl mb-4 text-balance">
-              Nossos Serviços
+          <div className="text-center mb-16">
+            <div className="inline-block mb-4 px-4 py-1.5 bg-primary/10 rounded-full">
+              <span className="text-sm font-semibold text-primary">Nossos Serviços</span>
+            </div>
+            <h2 className="font-heading font-bold text-4xl md:text-5xl mb-4 text-balance">
+              Soluções Completas em Acabamentos
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Soluções completas em acabamentos para residências e empresas
+            <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
+              Do projeto à execução, oferecemos qualidade premium para residências e empresas
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: Home, title: 'Forros de PVC', desc: 'Resistentes, fáceis de limpar e com ótimo acabamento' },
-              { icon: Hammer, title: 'Forros Drywall', desc: 'Versáteis e modernos para qualquer ambiente' },
-              { icon: DoorOpen, title: 'Divisórias', desc: 'Otimize espaços com divisórias funcionais' },
-              { icon: Sparkles, title: 'Sancas de Gesso', desc: 'Elegância e sofisticação para seus ambientes' },
-              { icon: Volume2, title: 'Forros Acústicos', desc: 'Controle de ruído para ambientes comerciais' },
-              { icon: Building2, title: 'Forros Modulares', desc: 'Sistemas práticos para escritórios e lojas' },
-              { icon: Lightbulb, title: 'Iluminação Embutida', desc: 'Projetos completos com iluminação integrada' },
-              { icon: Wrench, title: 'Manutenção', desc: 'Reparos e manutenção de forros existentes' },
+              { image: '/images/service-pvc.jpg', title: 'Forros de PVC', desc: 'Resistente à umidade, fácil limpeza e ótimo custo-benefício' },
+              { image: '/images/service-drywall.jpg', title: 'Forros Drywall', desc: 'Acabamento moderno e versátil para qualquer ambiente' },
+              { image: '/images/service-divisorias.jpg', title: 'Divisórias', desc: 'Otimização de espaços com divisórias inteligentes' },
+              { image: '/images/service-gesso.jpg', title: 'Sancas de Gesso', desc: 'Elegância e sofisticação com iluminação integrada' },
+              { image: '/images/service-acustico.jpg', title: 'Forros Acústicos', desc: 'Controle acústico profissional para ambientes corporativos' },
+              { image: '/images/service-modular.jpg', title: 'Forros Modulares', desc: 'Praticidade e acesso facilitado para instalações' },
+              { image: '/images/service-iluminacao.jpg', title: 'Iluminação Embutida', desc: 'Projetos luminotécnicos completos e modernos' },
+              { image: '/images/service-manutencao.jpg', title: 'Manutenção', desc: 'Reparos e manutenção preventiva de forros' },
             ].map((service, idx) => (
-              <Card key={idx} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <service.icon className="h-10 w-10 text-primary mb-4" />
-                  <h3 className="font-heading font-semibold text-lg mb-2">{service.title}</h3>
+              <Card key={idx} className="group overflow-hidden border-2 hover:border-primary hover:shadow-2xl transition-all duration-300">
+                <div className="relative h-48 overflow-hidden">
+                  <Image 
+                    src={service.image || "/placeholder.svg"} 
+                    alt={service.title}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent" />
+                  <h3 className="absolute bottom-4 left-4 right-4 font-heading font-bold text-lg text-background">
+                    {service.title}
+                  </h3>
+                </div>
+                <CardContent className="p-5">
                   <p className="text-sm text-muted-foreground leading-relaxed">{service.desc}</p>
                 </CardContent>
               </Card>
@@ -398,8 +498,20 @@ export default function Page() {
                     />
                   </div>
 
-                  <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90">
-                    Enviar Solicitação
+                  {submitSuccess && (
+                    <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm text-center">
+                      ✓ Orçamento enviado com sucesso! Entraremos em contato em breve.
+                    </div>
+                  )}
+
+                  <Button 
+                    type="submit" 
+                    size="lg" 
+                    className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Enviando...' : 'Enviar Solicitação'}
+                    {!isSubmitting && <ArrowRight className="ml-2 h-4 w-4" />}
                   </Button>
 
                   <p className="text-xs text-muted-foreground text-center leading-relaxed">
@@ -442,35 +554,64 @@ export default function Page() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-foreground text-background py-12">
+      <footer className="bg-gradient-to-br from-foreground via-foreground/98 to-foreground text-background py-16">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center">
-                  <span className="text-xl font-bold text-primary-foreground">RT</span>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg">
+                  <span className="text-2xl font-bold text-foreground">RT</span>
                 </div>
-                <span className="font-heading font-bold text-xl">Rei do Teto</span>
+                <div>
+                  <span className="font-heading font-bold text-xl block">Rei do Teto</span>
+                  <span className="text-xs text-background/60">Forros e Divisórias</span>
+                </div>
               </div>
               <p className="text-sm text-background/70 leading-relaxed">
-                Especialistas em forros e divisórias no Espírito Santo. Qualidade e confiança há mais de 10 anos.
+                Mais de 10 anos transformando ambientes no Espírito Santo com qualidade, profissionalismo e os melhores preços.
               </p>
             </div>
             <div>
-              <h3 className="font-heading font-semibold text-lg mb-4">Contato</h3>
+              <h3 className="font-heading font-semibold text-lg mb-5">Entre em Contato</h3>
               <div className="space-y-3">
-                <a href="https://wa.me/5527996369622" className="flex items-center gap-2 text-sm text-background/70 hover:text-primary transition-colors">
-                  <Phone className="h-4 w-4" />
-                  (27) 99636-9622
+                <a 
+                  href="tel:+5527996369622" 
+                  className="flex items-center gap-3 text-sm text-background/80 hover:text-primary transition-colors group"
+                >
+                  <div className="w-9 h-9 bg-background/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <Phone className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-background/60">Telefone</div>
+                    <div className="font-medium">(27) 99636-9622</div>
+                  </div>
                 </a>
-                <a href="mailto:contato@reidoteto.com.br" className="flex items-center gap-2 text-sm text-background/70 hover:text-primary transition-colors">
-                  <Mail className="h-4 w-4" />
-                  contato@reidoteto.com.br
+                <a 
+                  href="mailto:contato@reidoteto.com.br" 
+                  className="flex items-center gap-3 text-sm text-background/80 hover:text-primary transition-colors group"
+                >
+                  <div className="w-9 h-9 bg-background/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <Mail className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-background/60">E-mail</div>
+                    <div className="font-medium">contato@reidoteto.com.br</div>
+                  </div>
                 </a>
-                <div className="flex items-center gap-2 text-sm text-background/70">
-                  <MapPin className="h-4 w-4" />
-                  Espírito Santo, Brasil
-                </div>
+                <a 
+                  href="https://wa.me/5527996369622" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-sm text-background/80 hover:text-primary transition-colors group"
+                >
+                  <div className="w-9 h-9 bg-background/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <MessageCircle className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-background/60">WhatsApp</div>
+                    <div className="font-medium">Atendimento Rápido</div>
+                  </div>
+                </a>
               </div>
             </div>
             <div>
@@ -490,17 +631,6 @@ export default function Page() {
           </div>
         </div>
       </footer>
-
-      {/* Floating WhatsApp Button */}
-      <a
-        href="https://wa.me/5527996369622"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#25D366] hover:bg-[#20BA5A] rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
-        aria-label="Fale conosco no WhatsApp"
-      >
-        <MessageCircle className="h-7 w-7 text-white" />
-      </a>
     </div>
   )
 }
