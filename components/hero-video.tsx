@@ -14,6 +14,7 @@ export function HeroVideo({ videoSrc }: { videoSrc?: string }) {
     return (
         <div className="relative w-full h-[600px] md:h-full rounded-2xl overflow-hidden shadow-2xl">
             <video
+                key={videoSrc}
                 ref={videoRef}
                 autoPlay
                 loop

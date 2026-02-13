@@ -27,16 +27,16 @@ export const projectImages = {
         woman2: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop",
     },
     realProjects: [
-        "/images/imagens reais/WhatsApp Image 2026-02-13 at 12.26.43 (1).jpeg",
-        "/images/imagens reais/WhatsApp Image 2026-02-13 at 12.26.44 (3).jpeg",
-        "/images/imagens reais/WhatsApp Image 2026-02-13 at 12.26.44 (4).jpeg",
-        "/images/imagens reais/WhatsApp Image 2026-02-13 at 12.26.44 (5).jpeg",
-        "/images/imagens reais/WhatsApp Image 2026-02-13 at 12.26.45 (1).jpeg",
-        "/images/imagens reais/WhatsApp Image 2026-02-13 at 12.26.45 (2).jpeg",
-        "/images/imagens reais/WhatsApp Image 2026-02-13 at 12.26.45 (3).jpeg",
-        "/images/imagens reais/WhatsApp Image 2026-02-13 at 12.26.45 (5).jpeg",
-        "/images/imagens reais/WhatsApp Image 2026-02-13 at 12.26.45.jpeg",
-        "/images/imagens reais/WhatsApp Image 2026-02-13 at 12.26.46.jpeg",
+        "/images/real-projects/WhatsApp Image 2026-02-13 at 12.26.43 (1).jpeg",
+        "/images/real-projects/WhatsApp Image 2026-02-13 at 12.26.44 (3).jpeg",
+        "/images/real-projects/WhatsApp Image 2026-02-13 at 12.26.44 (4).jpeg",
+        "/images/real-projects/WhatsApp Image 2026-02-13 at 12.26.44 (5).jpeg",
+        "/images/real-projects/WhatsApp Image 2026-02-13 at 12.26.45 (1).jpeg",
+        "/images/real-projects/WhatsApp Image 2026-02-13 at 12.26.45 (2).jpeg",
+        "/images/real-projects/WhatsApp Image 2026-02-13 at 12.26.45 (3).jpeg",
+        "/images/real-projects/WhatsApp Image 2026-02-13 at 12.26.45 (5).jpeg",
+        "/images/real-projects/WhatsApp Image 2026-02-13 at 12.26.45.jpeg",
+        "/images/real-projects/WhatsApp Image 2026-02-13 at 12.26.46.jpeg",
     ],
-    heroVideo: "/images/imagens reais/hero-video.mp4"
+    heroVideo: "/images/real-projects/hero-video.mp4"
 }
