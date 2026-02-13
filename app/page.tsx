@@ -405,7 +405,7 @@ export default function Page() {
               {[
                 { image: projectImages.services.woodPvc, title: 'PVC Amadeirado', trend: 'Mais Popular', desc: 'Aparência de madeira com praticidade do PVC' },
                 { image: projectImages.services.drywall, title: 'Drywall Clean', trend: 'Minimalista', desc: 'Linhas retas e iluminação embutida' },
-                { image: projectImages.services.pvc, title: 'PVC Colorido', trend: 'Ousadia', desc: 'Cores vibrantes para ambientes modernos' },
+                { image: projectImages.services.pvc, title: 'PVC Branco Frisado', trend: 'Clássico', desc: 'O acabamento mais versátil e durável para sua casa' },
                 { image: projectImages.services.plaster, title: 'Sanca Invertida', trend: 'Sofisticação', desc: 'Iluminação indireta para efeito aconchegante' },
               ].map((trend, idx) => (
                 <Dialog key={idx}>

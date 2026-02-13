@@ -1,15 +1,15 @@
 export const projectImages = {
     services: {
-        pvc: "/images/trends-real/pvc-colorido-residencial.jpg", // Real image
-        drywall: "/images/trends-real/drywall-clean-residencial.jpg", // Real image
+        pvc: "/images/trends-real/pvc-colorido-residencial.jpg", // Real image (PVC Branco Frisado)
+        drywall: "/images/trends-real/drywall-clean-residencial.jpg", // Real image (Drywall Clean)
         drywallPartition: "/images/service-divisorias.jpg",
         insoforro: "/images/service-acustico.jpg",
-        woodPvc: "/images/trends-real/pvc-amadeirado-residencial.jpg", // Real image
+        woodPvc: "/images/trends-real/pvc-amadeirado-residencial.jpg", // Real image (PVC Amadeirado)
         mineral: "/images/service-modular.jpg",
         modular: "/images/service-modular.jpg",
         general: "/images/service-manutencao.jpg",
-        lighting: "/images/service-iluminacao.jpg", // Corrected per user request (was using led/trends previously)
-        plaster: "/images/trends-real/sanca-invertida-residencial.jpg", // Real image
+        lighting: "/images/service-iluminacao.jpg", // Corrected per user request
+        plaster: "/images/trends-real/sanca-invertida-residencial.jpg", // Real image (Sanca Invertida)
     },
     trends: {
         organic: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop", // Curvy furniture/ceiling
