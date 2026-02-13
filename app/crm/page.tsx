@@ -54,6 +54,8 @@ type Lead = {
   status: LeadStatus
   created_at: string
   updated_at: string
+  priority?: 'alta' | 'media' | 'baixa'
+  notes?: string
 }
 
 const getStatusLabel = (status: LeadStatus) => {
@@ -91,6 +93,7 @@ export default function CRMPage() {
   const [filterStatus, setFilterStatus] = useState<LeadStatus | 'todos'>('todos')
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [filterPriority, setFilterPriority] = useState('todos')
 
   const supabase = createClient()
 
@@ -172,6 +175,14 @@ export default function CRMPage() {
     })
   }
 
+  const getWhatsAppLink = (lead: Lead) => {
+    const cleanPhone = lead.phone.replace(/\D/g, '')
+    const message = encodeURIComponent(
+      `Olá ${lead.name}!\n\nAqui é da Rei do Teto. Recebi seu interesse no projeto de *${lead.project}* em *${lead.city}*.\n\nGostaria de agendar uma visita técnica gratuita?`
+    )
+    return `https://wa.me/55${cleanPhone}?text=${message}`
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
       {/* Mobile Sidebar Overlay */}
@@ -184,9 +195,8 @@ export default function CRMPage() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-card border-r border-border z-50 transform transition-transform lg:translate-x-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed top-0 left-0 h-full w-64 bg-card border-r border-border z-50 transform transition-transform lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         <div className="p-6">
           <div className="flex items-center justify-between mb-8">
@@ -474,7 +484,7 @@ export default function CRMPage() {
                               className="h-8 w-8"
                               asChild
                             >
-                              <a href={`https://wa.me/55${lead.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">
+                              <a href={getWhatsAppLink(lead)} target="_blank" rel="noopener noreferrer">
                                 <MessageCircle className="h-4 w-4" />
                               </a>
                             </Button>
@@ -535,7 +545,7 @@ export default function CRMPage() {
                       </a>
                     </Button>
                     <Button size="sm" variant="outline" className="flex-1" asChild>
-                      <a href={`https://wa.me/55${lead.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">
+                      <a href={getWhatsAppLink(lead)} target="_blank" rel="noopener noreferrer">
                         <MessageCircle className="h-4 w-4 mr-2" />
                         WhatsApp
                       </a>
@@ -691,7 +701,7 @@ export default function CRMPage() {
                     </a>
                   </Button>
                   <Button className="flex-1" variant="outline" asChild>
-                    <a href={`https://wa.me/55${selectedLead.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">
+                    <a href={getWhatsAppLink(selectedLead)} target="_blank" rel="noopener noreferrer">
                       <MessageCircle className="mr-2 h-4 w-4" />
                       WhatsApp
                     </a>
