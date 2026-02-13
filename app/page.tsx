@@ -403,6 +403,7 @@ export default function Page() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
+<<<<<<< HEAD
                 { image: projectImages.services.woodPvc, title: 'PVC Amadeirado', trend: 'Mais Popular', desc: 'Aparência de madeira com praticidade do PVC' },
                 { image: projectImages.services.drywall, title: 'Drywall Clean', trend: 'Minimalista', desc: 'Linhas retas e iluminação embutida' },
                 { image: projectImages.services.pvc, title: 'PVC Colorido', trend: 'Ousadia', desc: 'Cores vibrantes para ambientes modernos' },
@@ -457,6 +458,31 @@ export default function Page() {
                     </div>
                   </DialogContent>
                 </Dialog>
+=======
+                { title: 'PVC Amadeirado', trend: 'Mais Popular', desc: 'Aparência de madeira com praticidade do PVC', image: '/images/trends/pvc-amadeirado.jpg' },
+                { title: 'Drywall Clean', trend: 'Minimalista', desc: 'Linhas retas e iluminação embutida', image: '/images/trends/drywall-clean.jpg' },
+                { title: 'PVC Colorido', trend: 'Ousadia', desc: 'Cores vibrantes para ambientes modernos', image: '/images/trends/pvc-colorido.jpg' },
+                { title: 'Sanca Invertida', trend: 'Sofisticação', desc: 'Iluminação indireta para efeito aconchegante', image: '/images/trends/sanca-invertida.jpg' },
+              ].map((trend, idx) => (
+                <Card key={idx} className="group overflow-hidden border-2 hover:border-primary transition-all duration-300">
+                  <div className="relative h-40 overflow-hidden">
+                    <Image 
+                      src={trend.image} 
+                      alt={trend.title}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+                  </div>
+                  <CardContent className="p-5">
+                    <div className="bg-primary/10 text-primary text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full inline-block mb-2">
+                      {trend.trend}
+                    </div>
+                    <h4 className="font-heading font-semibold text-lg mb-1">{trend.title}</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{trend.desc}</p>
+                  </CardContent>
+                </Card>
+>>>>>>> e5f7a9a6d3b25ea8b8df1155e79d197473821c07
               ))}
             </div>
           </div>
@@ -469,6 +495,7 @@ export default function Page() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {[
+<<<<<<< HEAD
                 { image: projectImages.trends.modularB2B, title: 'Modular Corporativo', trend: 'Eficiência', desc: 'Fácil acesso a instalações e manutenção' },
                 { image: projectImages.trends.acoustic, title: 'Acústico Premium', trend: 'Conforto', desc: 'Redução de ruído para alta produtividade' },
                 { image: projectImages.trends.partitionB2B, title: 'Divisórias Inteligentes', trend: 'Flexibilidade', desc: 'Reconfiguração rápida de espaços' },
@@ -523,6 +550,31 @@ export default function Page() {
                     </div>
                   </DialogContent>
                 </Dialog>
+=======
+                { title: 'Modular Corporativo', trend: 'Eficiência', desc: 'Fácil acesso a instalações e manutenção', image: '/images/trends/modular-corporativo.jpg' },
+                { title: 'Acústico Premium', trend: 'Conforto', desc: 'Redução de ruído para alta produtividade', image: '/images/trends/acustico-premium.jpg' },
+                { title: 'Divisórias Inteligentes', trend: 'Flexibilidade', desc: 'Reconfiguração rápida de espaços', image: '/images/trends/divisorias-inteligentes.jpg' },
+                { title: 'Design Sustentável', trend: 'ESG', desc: 'Materiais eco-friendly e certificados', image: '/images/trends/sustentavel.jpg' },
+              ].map((trend, idx) => (
+                <Card key={idx} className="group overflow-hidden border-2 hover:border-secondary transition-all duration-300">
+                  <div className="relative h-40 overflow-hidden">
+                    <Image 
+                      src={trend.image} 
+                      alt={trend.title}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+                  </div>
+                  <CardContent className="p-5">
+                    <div className="bg-secondary/10 text-secondary text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full inline-block mb-2">
+                      {trend.trend}
+                    </div>
+                    <h4 className="font-heading font-semibold text-lg mb-1">{trend.title}</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{trend.desc}</p>
+                  </CardContent>
+                </Card>
+>>>>>>> e5f7a9a6d3b25ea8b8df1155e79d197473821c07
               ))}
             </div>
           </div>
