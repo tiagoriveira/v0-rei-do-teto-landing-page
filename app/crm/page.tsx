@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -18,14 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import {
-  mockLeads,
-  getStatusLabel,
-  getStatusColor,
-  getPriorityColor,
-  type Lead,
-  type LeadStatus,
-} from '@/lib/mock-crm-data'
+import { createClient } from '@/lib/supabase/client'
 import {
   Users,
   TrendingUp,
@@ -42,25 +35,93 @@ import {
   Menu,
   X,
   Home,
-  LayoutDashboard
+  LayoutDashboard,
+  RefreshCw
 } from 'lucide-react'
 
+type LeadStatus = 'new' | 'contacted' | 'qualified' | 'converted' | 'lost'
+
+type Lead = {
+  id: string
+  name: string
+  email: string
+  phone: string
+  customer_type: 'b2c' | 'b2b'
+  project: string
+  custom_description: string | null
+  city: string
+  message: string | null
+  status: LeadStatus
+  created_at: string
+  updated_at: string
+}
+
+const getStatusLabel = (status: LeadStatus) => {
+  const labels = {
+    new: 'Novo',
+    contacted: 'Contatado',
+    qualified: 'Qualificado',
+    converted: 'Convertido',
+    lost: 'Perdido',
+  }
+  return labels[status] || status
+}
+
+const getStatusColor = (status: LeadStatus) => {
+  const colors = {
+    new: 'bg-blue-500 hover:bg-blue-600',
+    contacted: 'bg-yellow-500 hover:bg-yellow-600',
+    qualified: 'bg-purple-500 hover:bg-purple-600',
+    converted: 'bg-green-500 hover:bg-green-600',
+    lost: 'bg-gray-500 hover:bg-gray-600',
+  }
+  return colors[status] || 'bg-gray-500'
+}
+
+const getPriorityColor = (daysOld: number) => {
+  if (daysOld === 0) return 'text-red-600'
+  if (daysOld <= 2) return 'text-orange-600'
+  return 'text-gray-600'
+}
+
 export default function CRMPage() {
-  const [leads, setLeads] = useState<Lead[]>(mockLeads)
+  const [leads, setLeads] = useState<Lead[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<LeadStatus | 'todos'>('todos')
-  const [filterPriority, setFilterPriority] = useState<string>('todos')
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const supabase = createClient()
+
+  // Fetch leads from Supabase
+  const fetchLeads = async () => {
+    setLoading(true)
+    const { data, error } = await supabase
+      .from('leads')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.log('[v0] Error fetching leads:', error)
+    } else {
+      setLeads(data || [])
+    }
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    fetchLeads()
+  }, [])
 
   // Calculate metrics
   const metrics = useMemo(() => {
     const total = leads.length
-    const novos = leads.filter((l) => l.status === 'novo').length
+    const novos = leads.filter((l) => l.status === 'new').length
     const emAndamento = leads.filter((l) =>
-      ['contatado', 'qualificado', 'proposta'].includes(l.status)
+      ['contacted', 'qualified'].includes(l.status)
     ).length
-    const convertidos = leads.filter((l) => l.status === 'convertido').length
+    const convertidos = leads.filter((l) => l.status === 'converted').length
     const taxaConversao = total > 0 ? ((convertidos / total) * 100).toFixed(1) : '0'
 
     return { total, novos, emAndamento, convertidos, taxaConversao }
@@ -77,21 +138,28 @@ export default function CRMPage() {
 
       const matchesStatus = filterStatus === 'todos' || lead.status === filterStatus
 
-      const matchesPriority =
-        filterPriority === 'todos' || lead.priority === filterPriority
-
-      return matchesSearch && matchesStatus && matchesPriority
+      return matchesSearch && matchesStatus
     })
-  }, [leads, searchQuery, filterStatus, filterPriority])
+  }, [leads, searchQuery, filterStatus])
 
-  const handleStatusChange = (leadId: string, newStatus: LeadStatus) => {
-    setLeads((prevLeads) =>
-      prevLeads.map((lead) =>
-        lead.id === leadId
-          ? { ...lead, status: newStatus, updated_at: new Date().toISOString() }
-          : lead
+  const handleStatusChange = async (leadId: string, newStatus: LeadStatus) => {
+    const { error } = await supabase
+      .from('leads')
+      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .eq('id', leadId)
+
+    if (error) {
+      console.log('[v0] Error updating lead:', error)
+      alert('Erro ao atualizar status. Tente novamente.')
+    } else {
+      setLeads((prevLeads) =>
+        prevLeads.map((lead) =>
+          lead.id === leadId
+            ? { ...lead, status: newStatus, updated_at: new Date().toISOString() }
+            : lead
+        )
       )
-    )
+    }
   }
 
   const formatDate = (dateString: string) => {
